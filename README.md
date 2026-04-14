@@ -1,30 +1,74 @@
-# API - Sistema de Banco de Questões
+# ⚙️ API - Sistema de Banco de Questões
 
 Uma API RESTful desenvolvida para gerenciar o Sistema de Banco de Questões, projeto integrante da residência tecnológica do IFB - Campus São Sebastião.
 
-## Sobre o Projeto
+## 📋 Sobre o Projeto
 Este repositório contém o código-fonte do backend (API) que alimenta a interface do frontend, sendo responsável pela regra de negócio, persistência de dados, rotas de segurança e, futuramente, integração com Inteligência Artificial para geração de questões e motores de exportação.
 
-## Tecnologias Utilizadas (a definir)
+## 🛠️ Tecnologias Utilizadas
 * **Linguagem:** Python 3.x
 * **Framework:** Django & Django REST Framework (DRF)
-* **Banco de Dados:** SQLite
-* **Autenticação:** **
-* **Integração IA:** *A decidir - ex: API da OpenAI*
-* **Gerador de PDF/XML:** **
+* **Banco de Dados:** SQLite (Desenvolvimento)
+* **Autenticação:** JWT (JSON Web Tokens) via `djangorestframework-simplejwt`
+* **Documentação da API:** Swagger UI via `drf-spectacular`
+* **Integração IA:** *A decidir - ex: API da OpenAI ou Gemini*
+* **Gerador de PDF/XML:** *A decidir*
 
-## Funcionalidades e Roadmap
+## ✨ Funcionalidades e Roadmap
 O desenvolvimento está dividido nas seguintes etapas:
 
 * [ ] Modelagem inicial do banco de dados (Categorias, Tags, Questões, Alternativas).
 * [ ] Desenvolvimento dos Endpoints REST (CRUD) para consumo do Front-End.
-* [ ] Sistema de Autenticação e Autorização (bloqueio de rotas não autenticadas).
-* [ ] Sistema de Filtros de busca (por tag, disciplina e autor).
+* [x] Sistema de Autenticação e Autorização (bloqueio de rotas com JWT).
+* [ ] Sistema de Filtros de busca (por tag, categoria e autor usando `django-filter`).
 * [ ] Integração com IA Generativa para criação automatizada de questões.
 * [ ] Motor de Exportação de arquivos (CSV, PDF formatado e XML padrão Moodle).
 
-## Como Rodar Localmente *To do*
+## 🚀 Como Rodar Localmente
 
-### Pré-requisitos *A definir*
+### Pré-requisitos
 * Python 3.10 ou superior
 * Git
+### Passo a Passo de Instalação
+
+1. **Clone o repositório:**
+```bash
+git clone https://github.com/ArthurDaniel02/banco-questoes-ifb
+cd bancoquestoes
+Crie e ative o ambiente virtual:
+
+PowerShell
+python -m venv venv
+# No Windows (PowerShell):
+.\venv\Scripts\Activate.ps1
+# No Linux/Mac:
+source venv/bin/activate
+
+
+Instale as dependências:
+
+PowerShell
+pip install django djangorestframework djangorestframework-simplejwt django-filter drf-spectacular drf-spectacular[sidecar]
+(Nota: futuramente adicionaremos um arquivo requirements.txt para facilitar este passo).
+
+Crie o banco de dados e aplique as migrações:
+
+PowerShell
+python manage.py makemigrations
+python manage.py migrate
+
+Crie um usuário administrador:
+PowerShell
+python manage.py createsuperuser
+
+Execute o servidor local:
+PowerShell
+python manage.py runserver
+
+
+📚 Acessando a Documentação
+Com o servidor rodando, você pode acessar a documentação interativa da API (Swagger) no seu navegador através do link:
+👉 https://www.google.com/search?q=http://127.0.0.1:8000/api/docs/
+
+
+Não se esqueça de rodar os comandos do Git (`git add .`, `git commit -m "docs: atualiza readme com progresso atual"`, `git push origin main`) para salvar essa atualização lá no GitHub.
