@@ -1,0 +1,20 @@
+# Core do Framework
+Django>=4.2,<5.0
+
+# Criação da API REST
+djangorestframework>=3.14.0
+
+# Autenticação com JWT
+djangorestframework-simplejwt>=5.3.0
+
+# Sistema de Filtros (Buscas)
+django-filter>=23.3
+
+# Documentação Automática (Swagger)
+drf-spectacular>=0.27.1
+drf-spectacular[sidecar]>=0.27.1
+
+# Integração com IA Generativa (Gemini)
+google-generativeai>=0.4.1
+
+pip install -r requirements.txt

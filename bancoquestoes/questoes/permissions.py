@@ -2,23 +2,34 @@ from rest_framework import permissions
 
 class IsCoordenador(permissions.BasePermission):
     """
-    Permite acesso apenas a usuários que possuem o perfil de Coordenador.
+    Permite acesso APENAS aos Coordenadores ou ao Superuser (Admin).
     """
     def has_permission(self, request, view):
-        return bool(request.user and request.user.is_authenticated and hasattr(request.user, 'perfil_coordenador'))
-
-class IsDocente(permissions.BasePermission):
-    """
-    Permite acesso apenas a usuários que possuem o perfil de Docente.
-    """
-    def has_permission(self, request, view):
-        return bool(request.user and request.user.is_authenticated and hasattr(request.user, 'perfil_docente'))
+        # Proteção básica: Tem que estar logado
+        if not request.user or not request.user.is_authenticated:
+            return False
+            
+        # O Superuser (criado no terminal) sempre passa
+        if request.user.is_superuser:
+            return True
+            
+        # Verifica se o usuário tem a caixinha 'is_coordenador' marcada no perfil
+        return hasattr(request.user, 'perfil') and request.user.perfil.is_coordenador
 
 class IsCoordenadorOrReadOnly(permissions.BasePermission):
     """
-    Qualquer um logado pode ler (GET), mas apenas Coordenadores podem alterar (POST, PUT, DELETE).
+    Qualquer professor logado pode ler (GET), mas apenas Coordenadores podem criar/editar/apagar (POST, PUT, DELETE).
     """
     def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+            
+        # Se for só leitura (GET), libera geral para quem tá logado
         if request.method in permissions.SAFE_METHODS:
-            return bool(request.user and request.user.is_authenticated)
-        return bool(request.user and request.user.is_authenticated and hasattr(request.user, 'perfil_coordenador'))
+            return True
+            
+        # Se for escrita/deleção, aplica a mesma regra do Coordenador
+        if request.user.is_superuser:
+            return True
+            
+        return hasattr(request.user, 'perfil') and request.user.perfil.is_coordenador
