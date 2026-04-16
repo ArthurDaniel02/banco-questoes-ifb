@@ -139,28 +139,50 @@ REST_FRAMEWORK = {
 }
 
 
+import inspect
+
 SPECTACULAR_SETTINGS = {
- 'TITLE': 'API - Banco de Questões IFB',
- 'DESCRIPTION': inspect.cleandoc("""
- ## API para gerenciamento de questões e futura geração com IA!
- - **END POINTS ABAIXO**
- ### Autenticação
- Use o endpoint `/api/token/` para obter seu token e inclua no cabeçalho:
- ```
- Authorization: Token <sua_chave>
- ```
- """),
- 'VERSION': '1.0.0',
- 'SERVE_INCLUDE_SCHEMA': False,
- 'SECURITY': [{'TokenAuth': []}],
- 'COMPONENTS': {
- 'securitySchemes': {
- 'TokenAuth': {
- 'type': 'apiKey',
- 'in': 'header',
- 'name': 'Authorization',
- 'description': 'Use o formato: Token <sua_chave>',
- },
- },
- },
+    'TITLE': 'API - Banco de Questões IFB 🎓',
+    'DESCRIPTION': inspect.cleandoc("""
+    Bem-vindo(a) à documentação interativa da API do **Sistema de Banco de Questões**.
+    Desenvolvido como parte do projeto de Residência Tecnológica do IFB - Campus São Sebastião.
+
+    ---
+
+    ### 🔐 Como Autenticar (Login)
+    Esta API utiliza segurança baseada em **JWT (JSON Web Tokens)**. Para testar os endpoints trancados, siga estes passos:
+    
+    1. Vá até a rota **`POST /api/login/`** e insira seu usuário e senha.
+    2. Copie o texto gigante que vai retornar no campo `access`.
+    3. Clique no botão verde **Authorize** (ou no ícone de cadeado) no topo desta página.
+    4. Cole o token copiado e clique em Authorize. O Swagger cuidará do resto!
+
+    ### 👥 Níveis de Acesso (RBAC)
+    O sistema identifica automaticamente o seu perfil:
+    * **Docentes:** Podem criar questões, gerenciar suas alternativas e visualizar o banco.
+    * **Coordenadores:** Possuem privilégios administrativos para gerenciar Categorias (Disciplinas).
+
+    ### 🚀 Roadmap de Desenvolvimento
+    - [x] CRUD de Questões e Alternativas
+    - [x] Autenticação e Autorização (JWT / RBAC)
+    - [ ] Módulo de Geração de Questões com IA Generativa
+    - [ ] Motores de Exportação (Moodle XML, PDF, CSV)
+    """),
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SECURITY': [{'jwtAuth': []}],
+    'COMPONENTS': {
+        'securitySchemes': {
+            'jwtAuth': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'JWT',
+                'description': 'O Swagger adicionará automaticamente o prefixo "Bearer " para você. Apenas cole o token gerado no login.',
+            },
+        },
+    },
+
+    'SWAGGER_UI_DIST': 'SIDECAR',
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
 }

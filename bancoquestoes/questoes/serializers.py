@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Categoria, Tag, Questao, Alternativa
+from .models import Categoria, Tag, Questao, Alternativa, Midia
 
 class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,11 +14,9 @@ class TagSerializer(serializers.ModelSerializer):
 class AlternativaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Alternativa
-        # Não pedimos a 'questao' aqui pois ela será preenchida automaticamente
-        fields = ['id', 'texto', 'is_correta'] 
+        fields = ['id', 'texto', 'is_correta', 'feedback'] 
 
 class QuestaoSerializer(serializers.ModelSerializer):
-    # Permite ler e criar as alternativas junto com a questão no mesmo JSON
     alternativas = AlternativaSerializer(many=True)
 
     class Meta:
@@ -26,19 +24,31 @@ class QuestaoSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['autor', 'criada_em', 'atualizada_em']
 
+    def validate_alternativas(self, alternativas):
+        """
+        Garante que a questão tenha exatamente 5 alternativas e apenas 1 correta.
+        """
+        if len(alternativas) != 5:
+            raise serializers.ValidationError("Uma questão de múltipla escolha deve ter exatamente 5 alternativas.")
+
+        # Conta quantas alternativas vieram com 'is_correta = True'
+        qtd_corretas = sum(1 for alt in alternativas if alt.get('is_correta', False))
+        
+        if qtd_corretas != 1:
+            raise serializers.ValidationError("A questão deve ter exatamente uma alternativa marcada como correta.")
+
+        return alternativas
+
+
     def create(self, validated_data):
-        # Separa as alternativas e tags dos dados da questão
         alternativas_data = validated_data.pop('alternativas')
         tags_data = validated_data.pop('tags', [])
-        
-        # Cria a questão
+
         questao = Questao.objects.create(**validated_data)
-        
-        # Adiciona as tags
+
         for tag in tags_data:
             questao.tags.add(tag)
-            
-        # Cria as alternativas vinculadas à questão
+   
         for alt_data in alternativas_data:
             Alternativa.objects.create(questao=questao, **alt_data)
             
