@@ -168,10 +168,6 @@ SPECTACULAR_SETTINGS = {
     * **Docentes:** Podem criar questões, gerenciar suas alternativas e visualizar o banco.
     * **Coordenadores:** Possuem privilégios administrativos para gerenciar os docentes e são permitidos a fazer todo o resto.
 
-    ### 🚀 Roadmap de Desenvolvimento
-    - [x] CRUD de Questões e Alternativas
-    - [x] Autenticação e Autorização (JWT / RBAC)
-    - [ ] Módulo de Geração de Questões com IA Generativa
     """),
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
