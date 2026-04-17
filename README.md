@@ -93,9 +93,8 @@ A documentação interativa completa (com Schemas e testes em tempo real) está 
 * Git
 
 ### Passo a Passo de Instalação
-
-1. **Clone o repositório e acesse a pasta:**
 ```bash
+1. **Clone o repositório e acesse a pasta:**
 git clone [https://github.com/ArthurDaniel02/banco-questoes-ifb](https://github.com/ArthurDaniel02/banco-questoes-ifb)
 cd banco-questoes-ifb
 
