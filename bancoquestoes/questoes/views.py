@@ -12,6 +12,7 @@ from .models import Categoria, Tag, Questao, Alternativa, HistoricoUso
 from .serializers import CategoriaSerializer, TagSerializer, QuestaoSerializer, AlternativaSerializer, RegistroUsuarioSerializer
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsCoordenadorOrReadOnly, IsCoordenador
+import os
 
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
@@ -85,7 +86,7 @@ class GerarQuestaoIAView(APIView):
 
         mapa_dificuldade = {'F': 'Fácil', 'M': 'Média', 'D': 'Difícil'}
         dificuldade_texto = mapa_dificuldade.get(dificuldade, 'Média')
-
+        
         # O Cérebro da Operação: O Prompt
         system_prompt = f"""
         Você é um professor universitário especialista na criação de banco de questões.
@@ -134,7 +135,8 @@ class GerarQuestaoIAView(APIView):
         try:
             # NOVA SINTAXE DO GEMINI (SDK Atualizado)
             # ⚠️ Lembrete: Coloque sua chave aqui para testar localmente
-            client = genai.Client(api_key="COLE_SUA_CHAVE_AQUI_TEMPORARIAMENTE") 
+            chave_api = os.environ.get("GEMINI_API_KEY", "chave_nao_encontrada")
+            client = genai.Client(api_key=chave_api)
             
             # response_mime_type garante que a IA devolva um JSON puro
             resposta = client.models.generate_content(

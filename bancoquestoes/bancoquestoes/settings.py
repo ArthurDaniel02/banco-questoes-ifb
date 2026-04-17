@@ -11,7 +11,12 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
-import inspect
+import inspect, os
+import dj_database_url
+SECRET_KEY = os.environ.get('SECRET_KEY', '142f9aca8941e0d04b4efbf754361bb6')
+DEBUG = 'RENDER' not in os.environ # Só fica True na sua máquina, no Render fica False
+ALLOWED_HOSTS = ['*']
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -46,6 +51,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -139,7 +145,6 @@ REST_FRAMEWORK = {
 }
 
 
-import inspect
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'API - Banco de Questões IFB 🎓',
@@ -160,13 +165,12 @@ SPECTACULAR_SETTINGS = {
     ### 👥 Níveis de Acesso (RBAC)
     O sistema identifica automaticamente o seu perfil:
     * **Docentes:** Podem criar questões, gerenciar suas alternativas e visualizar o banco.
-    * **Coordenadores:** Possuem privilégios administrativos para gerenciar Categorias (Disciplinas).
+    * **Coordenadores:** Possuem privilégios administrativos para gerenciar os docentes e são permitidos a fazer todo o resto.
 
     ### 🚀 Roadmap de Desenvolvimento
     - [x] CRUD de Questões e Alternativas
     - [x] Autenticação e Autorização (JWT / RBAC)
     - [ ] Módulo de Geração de Questões com IA Generativa
-    - [ ] Motores de Exportação (Moodle XML, PDF, CSV)
     """),
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
@@ -186,3 +190,15 @@ SPECTACULAR_SETTINGS = {
     'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
     'REDOC_DIST': 'SIDECAR',
 }
+
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
