@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Categoria, Tag, Questao, Alternativa, Perfil
-
+from django.db import transaction
 class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categoria
@@ -82,8 +82,15 @@ class RegistroUsuarioSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         is_coord = validated_data.pop('is_coordenador', False)
-        # O Django cria o User com a senha criptografada em segurança
-        user = User.objects.create_user(**validated_data)
-        # Cria a caixinha do Perfil ligada a esse usuário
-        Perfil.objects.create(usuario=user, is_coordenador=is_coord)
+
+        with transaction.atomic():
+            user = User.objects.create_user(**validated_data)
+            Perfil.objects.create(usuario=user, is_coordenador=is_coord)
         return user
+    
+class UsuarioDetalheSerializer(serializers.ModelSerializer):
+    is_coordenador = serializers.BooleanField(source='perfil.is_coordenador', read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'is_coordenador']

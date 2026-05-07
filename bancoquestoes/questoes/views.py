@@ -9,7 +9,7 @@ from django.db.models import Max, F
 from django.contrib.auth.models import User
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Categoria, Tag, Questao, Alternativa, HistoricoUso
-from .serializers import CategoriaSerializer, TagSerializer, QuestaoSerializer, AlternativaSerializer, RegistroUsuarioSerializer
+from .serializers import CategoriaSerializer, TagSerializer, QuestaoSerializer, AlternativaSerializer, RegistroUsuarioSerializer, UsuarioDetalheSerializer
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsCoordenadorOrReadOnly, IsCoordenador
 import os
@@ -66,12 +66,13 @@ class AlternativaViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
 class GerenciamentoUsuariosViewSet(viewsets.ModelViewSet):
-    """
-    Rota de administração de professores (Apenas Coordenadores)
-    """
-    queryset = User.objects.all()
+    queryset = User.objects.all().select_related('perfil')
     serializer_class = RegistroUsuarioSerializer
     permission_classes = [IsCoordenador]
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return RegistroUsuarioSerializer
+        return UsuarioDetalheSerializer
 
 class GerarQuestaoIAView(APIView):
     permission_classes = [IsAuthenticated] 
