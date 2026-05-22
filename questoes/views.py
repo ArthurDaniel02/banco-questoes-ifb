@@ -142,7 +142,7 @@ class GerarQuestaoIAView(APIView):
             client = genai.Client(api_key=chave_api)
             
             resposta = client.models.generate_content(
-                model='gemini-1.5-flash',
+                model='gemini-2.0-flash',
                 contents=system_prompt,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json",
