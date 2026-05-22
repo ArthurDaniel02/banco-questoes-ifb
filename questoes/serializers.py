@@ -18,7 +18,7 @@ class AlternativaSerializer(serializers.ModelSerializer):
         fields = ['id', 'texto', 'is_correta', 'feedback'] 
 
 class QuestaoSerializer(serializers.ModelSerializer):
-    # required=False porque questões ABERTAS não enviarão alternativas
+   
     alternativas = AlternativaSerializer(many=True, required=False)
 
     class Meta:
@@ -30,7 +30,7 @@ class QuestaoSerializer(serializers.ModelSerializer):
         """
         Valida a quantidade de alternativas de acordo com o TIPO da questão.
         """
-        # Pega o tipo da questão (se for atualização, pega do banco)
+     
         tipo = data.get('tipo_questao', getattr(self.instance, 'tipo_questao', 'MULTIPLA_ESCOLHA'))
         alternativas = data.get('alternativas', [])
 
@@ -53,7 +53,6 @@ class QuestaoSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        # O .pop() com [] garante que não dê erro se vier vazio (Questão Aberta)
         alternativas_data = validated_data.pop('alternativas', [])
         tags_data = validated_data.pop('tags', [])
         
@@ -94,3 +93,12 @@ class UsuarioDetalheSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name', 'is_coordenador']
+
+class GerarQuestaoIASerializer(serializers.Serializer):
+    tema = serializers.CharField(required=True, help_text="Tema da questão (ex: Redes de Computadores)")
+    dificuldade = serializers.ChoiceField(
+        choices=[('F', 'Fácil'), ('M', 'Média'), ('D', 'Difícil')], 
+        default='M',
+        help_text="Nível de dificuldade (F, M ou D)"
+    )
+    contexto = serializers.CharField(required=False, default="Geral", help_text="Foco ou diretriz específica")

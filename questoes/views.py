@@ -5,11 +5,12 @@ from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from drf_spectacular.utils import extend_schema
 from django.db.models import Max, F
 from django.contrib.auth.models import User
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Categoria, Tag, Questao, Alternativa, HistoricoUso
-from .serializers import CategoriaSerializer, TagSerializer, QuestaoSerializer, AlternativaSerializer, RegistroUsuarioSerializer, UsuarioDetalheSerializer
+from .serializers import CategoriaSerializer, TagSerializer, QuestaoSerializer, AlternativaSerializer, RegistroUsuarioSerializer, UsuarioDetalheSerializer,GerarQuestaoIASerializer
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsCoordenadorOrReadOnly, IsCoordenador
 import os
@@ -77,6 +78,11 @@ class GerenciamentoUsuariosViewSet(viewsets.ModelViewSet):
 class GerarQuestaoIAView(APIView):
     permission_classes = [IsAuthenticated] 
 
+    @extend_schema(
+        request=GerarQuestaoIASerializer,
+        summary="Gera rascunhos de questões com IA",
+        description="Consome a API do Gemini para gerar 10 questões inéditas estruturadas em formato JSON baseadas no tema fornecido."
+    )
     def post(self, request):
         tema = request.data.get('tema', '')
         dificuldade = request.data.get('dificuldade', 'M')
@@ -88,7 +94,6 @@ class GerarQuestaoIAView(APIView):
         mapa_dificuldade = {'F': 'Fácil', 'M': 'Média', 'D': 'Difícil'}
         dificuldade_texto = mapa_dificuldade.get(dificuldade, 'Média')
         
-        # O Cérebro da Operação: O Prompt
         system_prompt = f"""
         Você é um professor universitário especialista na criação de banco de questões.
         Crie EXATAMENTE 10 questões inéditas com os seguintes parâmetros:
@@ -114,7 +119,6 @@ class GerarQuestaoIAView(APIView):
                     "alternativas": [
                         {{"texto": "Alternativa 1...", "is_correta": false, "feedback": "..."}},
                         {{"texto": "Alternativa Correta...", "is_correta": true, "feedback": "..."}}
-                        // (Lembre-se: exatas 5 alternativas aqui)
                     ]
                 }},
                 {{
@@ -134,12 +138,9 @@ class GerarQuestaoIAView(APIView):
         """
 
         try:
-            # NOVA SINTAXE DO GEMINI (SDK Atualizado)
-            # ⚠️ Lembrete: Coloque sua chave aqui para testar localmente
             chave_api = os.environ.get("GEMINI_API_KEY", "chave_nao_encontrada")
             client = genai.Client(api_key=chave_api)
             
-            # response_mime_type garante que a IA devolva um JSON puro
             resposta = client.models.generate_content(
                 model='gemini-1.5-flash',
                 contents=system_prompt,
@@ -148,9 +149,7 @@ class GerarQuestaoIAView(APIView):
                 ),
             )
             
-            # Converte a resposta de texto (JSON puro) para um dicionário Python
             dados_ia = json.loads(resposta.text)
-            
             return Response(dados_ia, status=status.HTTP_200_OK)
 
         except json.JSONDecodeError:
