@@ -8,10 +8,10 @@ ALLOWED_HOSTS = ['*']
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 if not DEBUG:
-    ALLOWED_HOSTS = ['://onrender.com'] 
+    ALLOWED_HOSTS = ['api-banco-questoes.onrender.com', '*'] 
+    CSRF_TRUSTED_ORIGINS = ['https://api-banco-questoes.onrender.com']
 else:
     ALLOWED_HOSTS = ['*']
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
