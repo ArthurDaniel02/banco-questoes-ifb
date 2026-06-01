@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Banco de Dados
+db.sqlite3
+db.sqlite3-journal
+
+# Ambientes Virtuais
+venv/
+.venv/
+env/
+
+# Variáveis de Ambiente
+.env
+
+# Arquivos de Upload e Estáticos (Render/Produção)
+media/
+staticfiles/
+
+# Editores e SO
+.vscode/
+.idea/
+.DS_Store
