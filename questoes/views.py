@@ -1,6 +1,5 @@
 import json
-from google import genai
-from google.genai import types
+from groq import Groq
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -138,21 +137,30 @@ class GerarQuestaoIAView(APIView):
         """
 
         try:
-            chave_api = os.environ.get("GEMINI_API_KEY", "chave_nao_encontrada")
-            client = genai.Client(api_key=chave_api)
+            chave_api = os.environ.get("GROQ_API_KEY", "chave_nao_encontrada")
+            client = Groq(api_key=chave_api)
             
-            resposta = client.models.generate_content(
-                model='gemini-2.0-flash',
-                contents=system_prompt,
-                config=types.GenerateContentConfig(
-                    response_mime_type="application/json",
-                ),
+           
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {
+                        "role": "system",
+                        "content": system_prompt
+                    }
+                ],
+                model="llama3-8b-8192",
+                temperature=0.7,
+            
+                response_format={"type": "json_object"}, 
             )
             
-            dados_ia = json.loads(resposta.text)
+           
+            resposta_texto = chat_completion.choices[0].message.content
+            dados_ia = json.loads(resposta_texto)
+            
             return Response(dados_ia, status=status.HTTP_200_OK)
 
         except json.JSONDecodeError:
             return Response({"erro": "A IA gerou um formato inválido. Tente novamente."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
-            return Response({"erro": f"Erro na API do Gemini: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"erro": f"Erro na API da Groq: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
