@@ -25,7 +25,7 @@ Uma API RESTful desenvolvida para gerenciar o Sistema de Banco de Questões, pro
 ---
 
 ## Visão Geral
-Este repositório contém o código-fonte do backend (API) que alimenta a interface do frontend do Banco de Questões. O sistema é responsável pela regra de negócio, persistência de dados, rotas de segurança e integração com Inteligência Artificial (Gemini) para geração automatizada de questões em múltiplos formatos.
+Este repositório contém o código-fonte do backend (API) que alimenta a interface do frontend do Banco de Questões. O sistema é responsável pela regra de negócio, persistência de dados, rotas de segurança e integração com Inteligência Artificial (Groq) para geração automatizada de questões em múltiplos formatos.
 
 ## Problema que Resolve
 A elaboração e gestão de questões avaliativas é um processo demorado e suscetível a repetições. O sistema centraliza o acervo da instituição, permite a categorização inteligente por tags e níveis de dificuldade, aplica controle de "frescor" (evitando o reuso frequente da mesma questão) e agiliza o trabalho docente através da geração de rascunhos de questões via IA.
@@ -41,7 +41,7 @@ O desenvolvimento está dividido nas seguintes etapas:
 - [x] Desenvolvimento dos Endpoints REST (CRUD) e validação de regras de negócio estritas.
 - [x] Sistema de Autenticação (JWT) e Autorização/Níveis de Acesso (RBAC).
 - [x] Sistema de Filtros de busca (por tag, categoria e autor).
-- [x] Integração com IA Generativa (Gemini 1.5) para criação automatizada de questões em lote.
+- [x] Integração com IA Generativa (Groq) para criação automatizada de questões em lote.
 
 ---
 
@@ -76,7 +76,7 @@ A documentação interativa completa (com Schemas e testes em tempo real) está 
 | **Autenticação** | POST | `/api/login/refresh/` | Renova o token expirado | Público |
 | **Usuários** | GET/POST | `/api/usuarios/` | Gerenciamento de docentes | Coordenador |
 | **Questões** | GET/POST | `/api/questoes/` | Lista, filtra e cria questões | Docente |
-| **Questões (IA)** | POST | `/api/questoes-gerar-ia/` | Gera 10 questões inéditas via Gemini | Docente |
+| **Questões (IA)** | POST | `/api/questoes-gerar-ia/` | Gera 10 questões inéditas via groq | Docente |
 | **Histórico** | POST | `/api/questoes/{id}/registrar_uso/`| Registra log de exportação (frescor) | Docente |
 | **Alternativas** | GET/POST | `/api/alternativas/` | Gerencia as alternativas de uma questão | Docente |
 | **Categorias** | GET/POST | `/api/categorias/` | CRUD de categorias de disciplinas | Docente* |
@@ -110,7 +110,7 @@ python -m venv venv
 pip install -r requirements.txt
 
 4. Variáveis de Ambiente:
-Crie um arquivo .env na raiz do projeto (opcional localmente) ou defina a chave da API do Gemini diretamente no sistema para testar a geração de questões.
+Crie um arquivo .env na raiz do projeto (opcional localmente) ou defina a chave da API do Groq diretamente no sistema para testar a geração de questões.
 
 5. Crie o banco de dados e o superusuário:
 ```bash
@@ -126,7 +126,7 @@ Acesse localmente em: http://127.0.0.1:8000/api/docs/
 Deploy (Produção)
 A API está hospedada na plataforma Render.com, utilizando variáveis de ambiente para proteção de chaves e banco de dados PostgreSQL.
 
-Root Directory: bancoquestoes
+Root Directory
 
 Build Command: sh build.sh (Executa instalações, coleta de estáticos e migrações do banco)
 
