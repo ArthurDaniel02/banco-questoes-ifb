@@ -1,9 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# ==========================================
-# 1. PERFIL E CONTROLE DE ACESSO
-# ==========================================
+
 class Perfil(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
     is_coordenador = models.BooleanField(
@@ -15,9 +13,7 @@ class Perfil(models.Model):
         tipo = "Coordenador" if self.is_coordenador else "Professor"
         return f"[{tipo}] {self.usuario.get_full_name() or self.usuario.username}"
 
-# ==========================================
-# 2. TABELAS INDEPENDENTES
-# ==========================================
+
 class Categoria(models.Model):
     nome = models.CharField(max_length=100, unique=True)
 
@@ -30,9 +26,7 @@ class Tag(models.Model):
     def __str__(self):
         return self.nome
 
-# ==========================================
-# 3. TABELA CENTRAL (QUESTÃO)
-# ==========================================
+
 class Questao(models.Model):
     TIPO_CHOICES = [
         ('MULTIPLA_ESCOLHA', 'Múltipla Escolha'),
@@ -49,7 +43,7 @@ class Questao(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='questoes')
     tags = models.ManyToManyField(Tag, blank=True)
     
-    # O User do Django já tem email e nome, acessamos via autor.get_full_name() ou autor.email
+
     autor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     
     ativo = models.BooleanField(default=True)
@@ -59,11 +53,9 @@ class Questao(models.Model):
     def __str__(self):
         return f"[{self.get_tipo_questao_display()}] {self.enunciado[:30]}..."
 
-# ==========================================
-# 4. DEPENDENTES DA QUESTÃO
-# ==========================================
+
 class Alternativa(models.Model):
-    # Nota: No Serializer, garantiremos que questões 'ABERTA' não tenham alternativas
+   
     questao = models.ForeignKey(Questao, related_name='alternativas', on_delete=models.CASCADE)
     texto = models.TextField()
     is_correta = models.BooleanField(default=False)
@@ -72,11 +64,9 @@ class Alternativa(models.Model):
     def __str__(self):
         return f"{'[X]' if self.is_correta else '[ ]'} {self.texto[:40]}"
 
-# ==========================================
-# 5. HISTÓRICO DE EXPORTAÇÃO (LOGS)
-# ==========================================
+
 class HistoricoUso(models.Model):
-    # Foco exclusivo em exportação para controle de frescor da questão
+
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='historico_acoes')
     questao = models.ForeignKey(Questao, on_delete=models.CASCADE, related_name='historico_uso')
     data_acao = models.DateTimeField(auto_now_add=True)

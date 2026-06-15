@@ -54,7 +54,7 @@ O desenvolvimento está dividido nas seguintes etapas:
 | `djangorestframework-simplejwt` | Autenticação e segurança via JSON Web Tokens (JWT) |
 | `django-filter` | Sistema de buscas e filtros dinâmicos nas rotas |
 | `drf-spectacular` | Documentação interativa automática (Swagger UI) |
-| `google-genai` | Integração com a API do Google Gemini para geração de questões |
+| `groq` | Integração com a API do Groq para geração de questões |
 | `gunicorn` & `whitenoise` | Servidor WSGI e gerenciador de estáticos para ambiente de produção |
 
 ---

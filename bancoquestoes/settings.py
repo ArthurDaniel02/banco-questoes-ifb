@@ -133,7 +133,7 @@ SPECTACULAR_SETTINGS = {
     1. Vá até a rota **`POST /api/login/`** e insira seu usuário e senha.
     2. Copie o texto gigante que vai retornar no campo `access`.
     3. Clique no botão verde **Authorize**  no topo desta página.
-    4. Cole o token copiado e clique em Authorize (em jwtAuth. O Swagger cuidará do resto!
+    4. Cole o token copiado e clique em Authorize (em jwtAuth). O Swagger cuidará do resto!
 
     ###  Níveis de Acesso (RBAC)
     O sistema identifica automaticamente o seu perfil:

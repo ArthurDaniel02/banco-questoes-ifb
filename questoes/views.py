@@ -80,7 +80,7 @@ class GerarQuestaoIAView(APIView):
     @extend_schema(
         request=GerarQuestaoIASerializer,
         summary="Gera rascunhos de questões com IA",
-        description="Consome a API do Gemini para gerar 10 questões inéditas estruturadas em formato JSON baseadas no tema fornecido."
+        description="Consome a API do Groq para gerar 10 questões inéditas estruturadas em formato JSON baseadas no tema fornecido."
     )
     def post(self, request):
         tema = request.data.get('tema', '')
